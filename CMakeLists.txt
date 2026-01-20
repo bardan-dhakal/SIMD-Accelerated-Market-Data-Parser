@@ -43,9 +43,12 @@ else()
     message(WARNING "Compiler does not support AVX-512, performance will be degraded")
 endif()
 
-# Example executable
+# Example executables
 add_executable(simple_parse examples/simple_parse.cpp)
 target_link_libraries(simple_parse PRIVATE parser)
+
+add_executable(advanced_usage examples/advanced_usage.cpp)
+target_link_libraries(advanced_usage PRIVATE parser)
 
 # Benchmarks (optional - requires Google Benchmark)
 find_package(benchmark QUIET)
