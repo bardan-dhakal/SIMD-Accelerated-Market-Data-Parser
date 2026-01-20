@@ -1,0 +1,116 @@
+# Sample FIX Protocol Messages
+# =============================
+# Format: tag=value|tag=value|...
+# Common FIX tags used:
+#   8  = BeginString (FIX version)
+#   9  = BodyLength
+#   35 = MsgType (D=NewOrderSingle, 8=ExecutionReport, F=OrderCancelRequest, etc.)
+#   49 = SenderCompID
+#   56 = TargetCompID
+#   55 = Symbol
+#   54 = Side (1=Buy, 2=Sell, 5=SellShort)
+#   38 = OrderQty
+#   44 = Price
+#
+# Note: These examples use '|' as the field delimiter for readability.
+# Real FIX messages use SOH (ASCII 0x01) as the delimiter.
+
+# ============================================================================
+# NEW ORDER SINGLE (MsgType=D)
+# ============================================================================
+
+# Buy order: 100 shares of AAPL at $150.25
+8=FIX.4.4|35=D|49=TRADER1|56=EXCHANGE|55=AAPL|54=1|38=100|44=150.25|
+
+# Sell order: 500 shares of MSFT at $378.50
+8=FIX.4.4|35=D|49=TRADER1|56=EXCHANGE|55=MSFT|54=2|38=500|44=378.50|
+
+# Large buy order: 10000 shares of GOOGL at $141.75
+8=FIX.4.4|35=D|49=HEDGE_FUND_A|56=DARK_POOL|55=GOOGL|54=1|38=10000|44=141.75|
+
+# Sell short: 200 shares of TSLA at $248.90
+8=FIX.4.4|35=D|49=SHORT_SELLER|56=NYSE|55=TSLA|54=5|38=200|44=248.90|
+
+# Buy order: 250 shares of NVDA at $875.30
+8=FIX.4.4|35=D|49=ALGO_TRADER|56=NASDAQ|55=NVDA|54=1|38=250|44=875.30|
+
+# Sell order: 1500 shares of AMD at $156.80
+8=FIX.4.4|35=D|49=MARKET_MAKER|56=NYSE_ARCA|55=AMD|54=2|38=1500|44=156.80|
+
+# Buy order: 5000 shares of META at $505.25
+8=FIX.4.4|35=D|49=PENSION_FUND|56=BATS|55=META|54=1|38=5000|44=505.25|
+
+# ============================================================================
+# EXECUTION REPORT (MsgType=8)
+# ============================================================================
+
+# Filled: 100 shares of AAPL at $150.25
+8=FIX.4.4|35=8|49=EXCHANGE|56=TRADER1|55=AAPL|54=1|38=100|44=150.25|
+
+# Partial fill: 250 of 500 shares of MSFT at $378.50
+8=FIX.4.4|35=8|49=EXCHANGE|56=TRADER1|55=MSFT|54=2|38=250|44=378.50|
+
+# Filled: 10000 shares of GOOGL at $141.80 (price improved)
+8=FIX.4.4|35=8|49=DARK_POOL|56=HEDGE_FUND_A|55=GOOGL|54=1|38=10000|44=141.80|
+
+# ============================================================================
+# ORDER CANCEL REQUEST (MsgType=F)
+# ============================================================================
+
+# Cancel remaining MSFT sell order
+8=FIX.4.4|35=F|49=TRADER1|56=EXCHANGE|55=MSFT|54=2|38=250|44=378.50|
+
+# Cancel TSLA short sale
+8=FIX.4.4|35=F|49=SHORT_SELLER|56=NYSE|55=TSLA|54=5|38=200|44=248.90|
+
+# ============================================================================
+# ORDER CANCEL/REPLACE REQUEST (MsgType=G)
+# ============================================================================
+
+# Modify NVDA order: change quantity from 250 to 300, price from $875.30 to $874.00
+8=FIX.4.4|35=G|49=ALGO_TRADER|56=NASDAQ|55=NVDA|54=1|38=300|44=874.00|
+
+# ============================================================================
+# VARIOUS MESSAGE SIZES (for benchmarking)
+# ============================================================================
+
+# Small message (minimal fields)
+8=FIX.4.4|35=D|55=SPY|54=1|38=100|44=450.00|
+
+# Medium message (typical order)
+8=FIX.4.4|35=D|49=INSTITUTIONAL_TRADER|56=PRIMARY_EXCHANGE|55=AMZN|54=1|38=750|44=178.45|
+
+# Large message (many fields - extended for stress testing)
+8=FIX.4.4|35=D|49=QUANTITATIVE_HEDGE_FUND_ALPHA|56=CONSOLIDATED_EXCHANGE_NETWORK|55=BRK.A|54=1|38=5|44=628450.00|
+
+# ============================================================================
+# EDGE CASES
+# ============================================================================
+
+# High-priced stock (Berkshire Hathaway Class A)
+8=FIX.4.4|35=D|49=WEALTH_MGR|56=NYSE|55=BRK.A|54=1|38=1|44=628450.00|
+
+# Low-priced stock (penny stock example)
+8=FIX.4.4|35=D|49=RETAIL|56=OTC|55=PENNY|54=1|38=100000|44=0.0025|
+
+# Large quantity order
+8=FIX.4.4|35=D|49=INDEX_FUND|56=NYSE|55=VOO|54=1|38=500000|44=456.78|
+
+# Fractional price
+8=FIX.4.4|35=D|49=PRECISION|56=EXCHANGE|55=TEST|54=2|38=100|44=123.456789|
+
+# ============================================================================
+# BATCH FOR THROUGHPUT TESTING
+# ============================================================================
+
+# These messages can be used for throughput benchmarks
+8=FIX.4.4|35=D|49=BATCH1|56=EX|55=AAPL|54=1|38=100|44=150.00|
+8=FIX.4.4|35=D|49=BATCH2|56=EX|55=MSFT|54=2|38=200|44=375.00|
+8=FIX.4.4|35=D|49=BATCH3|56=EX|55=GOOGL|54=1|38=300|44=140.00|
+8=FIX.4.4|35=D|49=BATCH4|56=EX|55=AMZN|54=2|38=400|44=175.00|
+8=FIX.4.4|35=D|49=BATCH5|56=EX|55=META|54=1|38=500|44=500.00|
+8=FIX.4.4|35=D|49=BATCH6|56=EX|55=NVDA|54=2|38=600|44=870.00|
+8=FIX.4.4|35=D|49=BATCH7|56=EX|55=TSLA|54=1|38=700|44=245.00|
+8=FIX.4.4|35=D|49=BATCH8|56=EX|55=AMD|54=2|38=800|44=155.00|
+8=FIX.4.4|35=D|49=BATCH9|56=EX|55=INTC|54=1|38=900|44=45.00|
+8=FIX.4.4|35=D|49=BATCH10|56=EX|55=JPM|54=2|38=1000|44=195.00|
