@@ -54,6 +54,9 @@ target_link_libraries(advanced_usage PRIVATE parser)
 find_package(benchmark QUIET)
 if(benchmark_FOUND)
     add_executable(benchmark_parser benchmarks/benchmark_parser.cpp)
+    target_include_directories(benchmark_parser PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/benchmarks
+    )
     target_link_libraries(benchmark_parser PRIVATE parser benchmark::benchmark pthread)
     message(STATUS "Google Benchmark found - building benchmarks")
 else()
