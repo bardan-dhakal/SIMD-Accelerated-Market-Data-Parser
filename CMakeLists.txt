@@ -63,6 +63,44 @@ else()
     message(STATUS "Google Benchmark not found - skipping benchmarks (optional)")
 endif()
 
+# Tests (optional - requires Google Test)
+find_package(GTest QUIET)
+if(GTest_FOUND)
+    enable_testing()
+
+    # Test executables
+    add_executable(test_parser tests/test_parser.cpp)
+    target_include_directories(test_parser PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests
+    )
+    target_link_libraries(test_parser PRIVATE parser GTest::gtest GTest::gtest_main pthread)
+    add_test(NAME ParserTests COMMAND test_parser)
+
+    add_executable(test_simd_utils tests/test_simd_utils.cpp)
+    target_include_directories(test_simd_utils PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests
+    )
+    target_link_libraries(test_simd_utils PRIVATE parser GTest::gtest GTest::gtest_main pthread)
+    add_test(NAME SIMDUtilsTests COMMAND test_simd_utils)
+
+    add_executable(test_fix_message tests/test_fix_message.cpp)
+    target_include_directories(test_fix_message PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests
+    )
+    target_link_libraries(test_fix_message PRIVATE parser GTest::gtest GTest::gtest_main pthread)
+    add_test(NAME FIXMessageTests COMMAND test_fix_message)
+
+    # Combined test target
+    add_custom_target(run_tests
+        COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
+        DEPENDS test_parser test_simd_utils test_fix_message
+    )
+
+    message(STATUS "Google Test found - building tests")
+else()
+    message(STATUS "Google Test not found - skipping tests (optional)")
+endif()
+
 # Print build configuration
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 message(STATUS "C++ compiler: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
